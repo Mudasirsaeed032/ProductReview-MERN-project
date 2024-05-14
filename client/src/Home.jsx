@@ -2,10 +2,14 @@ import React, { useEffect, useState, useContext } from 'react'
 import axios from 'axios'
 import './Home.css'
 import {Link, useNavigate} from 'react-router-dom'
+// import jwt from 'jsonwebtoken'
+import { useJwt } from "react-jwt";
+
 
 function Home() {
     const [products, setProducts] = useState([]);
     const navigate = useNavigate();
+    axios.defaults.withCredentials = true;
     useEffect(() => {
         axios.get('http://localhost:3000/home')
             .then((res) => {

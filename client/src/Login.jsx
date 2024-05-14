@@ -8,20 +8,18 @@ function Login() {
     const [name, setName] = useState('');
     const navigate = useNavigate();
 
+    axios.defaults.withCredentials = true;
     const submitForm = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:3000/login', { email, password, name })
+        axios.post('http://localhost:3000/login',{ email, password, name },{
+            headers: {
+                'Content-Type': 'application/json',
+        }}
+        )
             .then((res) => {
                 console.log(res);
                 if (res.data === 'True') {
                     alert('Logged in successfully!');
-                    const loginUser = (userData) => {
-                        // Update the user state
-                        setUser(userData);
-
-                        // Also update localStorage
-                        localStorage.setItem('user', JSON.stringify(userData));
-                    };
                     navigate('/home');
                 }
                 else {

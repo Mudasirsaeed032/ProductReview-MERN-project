@@ -4,7 +4,6 @@ import Signup from './Signup.jsx'
 import Login from './Login.jsx'
 import Home from './Home.jsx'
 import Product from './Product.jsx'
-import Usercontext from './Usercontext.jsx'
 
 function App() {
   
