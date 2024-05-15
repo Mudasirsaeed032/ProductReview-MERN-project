@@ -169,7 +169,13 @@ app.get('/product/:id', verifyUser, async (req, res) => {
                     } else {
                         Product.findById(id)
                             .then((product) => {
-                                res.json({ message: 'Success', user, product });
+                                Review.find({ product: id })
+                                    .then((reviews) => {
+                                        res.json({ message: 'Success', user, product, reviews });
+                                    })
+                                    .catch((err) => {
+                                        res.json(err);
+                                    });
                             })
                             .catch((err) => {
                                 res.json(err);

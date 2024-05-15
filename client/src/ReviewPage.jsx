@@ -66,13 +66,13 @@ function ReviewPage() {
                 }
             }, { withCredentials: true })
             .then((res) => {
-            if (res.status === 200) {
-                console.log(res.data);
-                alert('Review has been submitted successfully!');
-            } else {
-                alert('There was an error submitting your review. Please try again.');
-            }
-        })
+                if (res.status === 200) {
+                    console.log(res.data);
+                    alert('Review has been submitted successfully!');
+                } else {
+                    alert('There was an error submitting your review. Please try again.');
+                }
+            })
             .catch((err) => {
                 console.log(err);
                 alert('There was an error submitting your review. Please try again.');
@@ -82,7 +82,7 @@ function ReviewPage() {
     return (
         <div>
             <h1>Welcome to the review page, {user ? user.name : 'Guest'}</h1>
-            <h3>What is your review about this product: {product ? product.title : 'some product'} priced at: {`$${product.price}`}</h3>
+            <h3>What is your review about this product: {product ? product.title : 'some product'} priced at: {product ? `$${product.price}`: 'some Price'}</h3>
             <div className='d-flex justify-content-center align-items-center bg-secondary vh-100 vw-100'>
                 <div className='bg-white p-3 rounded w-50'>
                     <h1>Register</h1>
