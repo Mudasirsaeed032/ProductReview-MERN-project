@@ -30,7 +30,7 @@ function Home() {
         axios.post('http://localhost:3000/home')
             .then((res) => {
                 console.log(res.data);
-                setUser(null); // Set user to null
+                setUser(null);
             })
             .catch((err) => {
                 console.log(err);
@@ -41,7 +41,7 @@ function Home() {
     return (
         <div className="container-fluid">
             <div className="row">
-                <h1>Welcome, {user ? user.name : 'Guest'}</h1>
+                <h1>Welcome, {user ? <Link to={`/profile/${user._id}`}>{user.name}</Link> : 'Guest'}</h1>
                 <button onClick={handleLogout}>Logout</button>
                 {products.map((product, i) => (
                     <div className="col-md-4" key={i}>
