@@ -95,6 +95,31 @@ app.post('/signup', async (req, res) => {
 
 })
 
+app.post('/product/:id/review', async (req, res) => {
+    const { id } = req.params;
+    const { title, description, starRatings, user } = req.body;
+    await Product.findById(id)
+        .then((product) => {
+            if (!product) {
+                res.json('Product not found');
+            }
+            else {
+                Review.create({
+                    title: title,
+                    description: description,
+                    starRatings: starRatings,
+                    user: user,
+                    product: product._id
+                })
+                    .then((review) => {
+                        res.json(review);
+                    })
+                    .catch((err) => {
+                        res.json(err);
+                    });
+            }
+        })
+});
 app.get('/home', verifyUser, async (req, res) => {
     const token = req.cookies.token;
     jwt.verify(token, 'secretkey1234', async (err, data) => {
@@ -130,6 +155,35 @@ app.post('/home', function (req, res) {
 });
 
 app.get('/product/:id', verifyUser, async (req, res) => {
+    const { id } = req.params;
+    const token = req.cookies.token;
+    jwt.verify(token, 'secretkey1234', async (err, data) => {
+        if (err) {
+            res.json({ message: 'You should log in' });
+        }
+        else {
+            await User.findOne({ email: data.email })
+                .then((user) => {
+                    if (!user) {
+                        res.json({ message: 'User not found' });
+                    } else {
+                        Product.findById(id)
+                            .then((product) => {
+                                res.json({ message: 'Success', user, product });
+                            })
+                            .catch((err) => {
+                                res.json(err);
+                            });
+                    }
+                })
+                .catch((err) => {
+                    res.json(err);
+                });
+        }
+    });
+});
+
+app.get('/product/:id/review', verifyUser, async (req, res) => {
     const { id } = req.params;
     const token = req.cookies.token;
     jwt.verify(token, 'secretkey1234', async (err, data) => {

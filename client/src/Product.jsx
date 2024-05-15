@@ -10,11 +10,11 @@ function Product() {
     const { id } = useParams();
 
     useEffect(() => {
-        axios.get(`http://localhost:3000/product/${id}`)
+        axios.get(`http://localhost:3000/product/${id}`, {withCredentials: true})
             .then((res) => {
                 console.log(res.data);
                 setProduct(res.data.product);
-                localStorage.setItem('product', JSON.stringify(res.data.product));
+                sessionStorage.setItem('product', JSON.stringify(res.data.product));
                 if (res.data.user) {
                     setUser(res.data.user);
                     localStorage.setItem('user', JSON.stringify(res.data.user));
@@ -27,8 +27,20 @@ function Product() {
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+        const storedProduct = sessionStorage.getItem('product');
+        if (storedUser && storedUser !== "undefined") {
+            try {
+                setUser(JSON.parse(storedUser));
+            } catch (error) {
+                console.error('Error parsing user data from local storage:', error);
+            }
+        }
+        if (storedProduct && storedProduct !== "undefined") {
+            try {
+                setProduct(JSON.parse(storedProduct));
+            } catch (error) {
+                console.error('Error parsing product data from session storage:', error);
+            }
         }
     }, [])
     return (
@@ -43,7 +55,7 @@ function Product() {
                 <div>Loading...</div>
             )}
             <div>{user ? `Welcome, ${user.name}` : 'Welcome, Guest'}</div>
-
+            <Link to={`/product/${id}/review`} className="btn btn-primary rounded-3">Review</Link>
         </div>
     )
 }
