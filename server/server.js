@@ -1,11 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const User = require('./models/user');
-const Product = require('./models/products');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
+const User = require('./models/user');
+const Product = require('./models/products');
+const Review = require('./models/reviews');
 
 main().catch(err => console.log(err));
 
@@ -32,16 +33,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 const verifyUser = (req, res, next) => {
     const token = req.cookies.token;
-    if(!token){
+    if (!token) {
         return res.json('Token not found');
     }
-    else{
+    else {
         jwt.verify(token, 'secretkey1234', (err, data) => {
-            if(err){
-            return res.json('Invalid token');
+            if (err) {
+                return res.json('Invalid token');
             }
-            else{
-            next();
+            else {
+                next();
             }
         });
     }
@@ -54,19 +55,19 @@ app.get('/', (req, res) => {
 
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    await User.findOne({ email: email,})
+    await User.findOne({ email: email, })
         .then((user) => {
             if (user) {
                 bcrypt.compare(password, user.password, (err, result) => {
-                    if(result){
-                        const token = jwt.sign({email: user.email}, 'secretkey1234' , {expiresIn: '1d'});
+                    if (result) {
+                        const token = jwt.sign({ email: user.email }, 'secretkey1234', { expiresIn: '1d' });
                         res.cookie('token', token);
                         res.json('True');
                     }
-                    else{
+                    else {
                         res.json('False');
                     }
-                    
+
                 })
             }
             else {
@@ -78,42 +79,84 @@ app.post('/login', async (req, res) => {
 app.post('/signup', async (req, res) => {
     const { name, email, password } = req.body;
     bcrypt.hash(password, 10)
-    .then((hash) =>{
-        User.create({
-            name: name,
-            email: email,
-            password: hash
-        })
-            .then((user) => {
-                res.json(user);
+        .then((hash) => {
+            User.create({
+                name: name,
+                email: email,
+                password: hash
             })
-            .catch((err) => {
-                res.json(err);
-            });
-    })
-    
-})
-
-app.get('/home',verifyUser, async (req, res) => {
-    await Product.find()
-        .then((products) => {
-            res.json(products);
+                .then((user) => {
+                    res.json(user);
+                })
+                .catch((err) => {
+                    res.json(err);
+                });
         })
-        .catch((err) => {
-            res.json(err);
-        });
+
 })
 
-app.get('/product/:id', async (req, res) => {
+app.get('/home', verifyUser, async (req, res) => {
+    const token = req.cookies.token;
+    jwt.verify(token, 'secretkey1234', async (err, data) => {
+        if (err) {
+            res.json({ message: 'You should log in' });
+        }
+        else {
+            await User.findOne({ email: data.email })
+                .then((user) => {
+                    if (!user) {
+                        res.json({ message: 'User not found' });
+                    } else {
+                        Product.find()
+                            .then((products) => {
+                                res.json({ message: 'Success', user, products });
+                            })
+                            .catch((err) => {
+                                res.json(err);
+                            });
+                    }
+                })
+                .catch((err) => {
+                    res.json(err);
+                });
+        }
+    });
+});
+
+app.post('/home', function (req, res) {
+    // handle logout here
+    // you might want to destroy the user session and then redirect to the login page
+    res.send('Logged out');
+});
+
+app.get('/product/:id', verifyUser, async (req, res) => {
     const { id } = req.params;
-    await Product.findById(id)
-        .then((products) => {
-            res.json(products);
-        })
-        .catch((err) => {
-            res.json(err);
-        });
-})
+    const token = req.cookies.token;
+    jwt.verify(token, 'secretkey1234', async (err, data) => {
+        if (err) {
+            res.json({ message: 'You should log in' });
+        }
+        else {
+            await User.findOne({ email: data.email })
+                .then((user) => {
+                    if (!user) {
+                        res.json({ message: 'User not found' });
+                    } else {
+                        Product.findById(id)
+                            .then((product) => {
+                                res.json({ message: 'Success', user, product });
+                            })
+                            .catch((err) => {
+                                res.json(err);
+                            });
+                    }
+                })
+                .catch((err) => {
+                    res.json(err);
+                });
+        }
+    });
+});
 
 app.listen(3000, () => {
     console.log("Server is running on port 3000!");
