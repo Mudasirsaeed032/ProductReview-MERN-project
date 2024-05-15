@@ -19,7 +19,8 @@ const seedDB = async () => {
             title: `${productSeed[i].title}`,
             price: `${productSeed[i].price}`,
             description: `${productSeed[i].description}`,
-            company: `${productSeed[i].company}`
+            company: `${productSeed[i].company}`,
+            img: `${productSeed[i].img}`
         });
         await newProduct.save()
         .then(data =>{

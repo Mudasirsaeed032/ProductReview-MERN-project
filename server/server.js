@@ -128,6 +128,7 @@ app.post('/product/:id/review', async (req, res) => {
             }
         })
 });
+
 app.get('/home', verifyUser, async (req, res) => {
     const token = req.cookies.token;
     jwt.verify(token, 'secretkey1234', async (err, data) => {
@@ -142,7 +143,13 @@ app.get('/home', verifyUser, async (req, res) => {
                     } else {
                         Product.find()
                             .then((products) => {
-                                res.json({ message: 'Success', user, products });
+                                Review.find()
+                                    .then((reviews) => {
+                                        res.json({ message: 'Success', user, products, reviews });
+                                    })
+                                    .catch((err) => {
+                                        res.json(err);
+                                    });
                             })
                             .catch((err) => {
                                 res.json(err);

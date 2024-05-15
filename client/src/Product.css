@@ -1,0 +1,39 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(45deg, #fffef9, #7094ce);
+    color: #213547;
+}
+
+.navbar {
+    position: fixed; /* Fix the navbar at the top */
+    top: 0; /* Position it at the very top of the page */
+    width: 100%; /* Make it span the entire width of the page */
+    z-index: 1000; /* Ensure it stays on top of other elements */
+}
+
+div {
+    margin-bottom: 15px;
+}
+
+h3 {
+    font-size: 1.5em;
+    color: #1a2f3f;
+}
+
+p {
+    font-size: 1.2em;
+    color: #1a2f3f;
+}
+
+.btn {
+    background-color: #1a2f3f;
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 3px;
+}
+
+.btn:hover {
+    background-color: #327b78;
+    color: #ffffff;
+}

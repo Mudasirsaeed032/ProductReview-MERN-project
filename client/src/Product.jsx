@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
+import './Product.css';
 
 function Product() {
     const [product, setProduct] = useState({});
@@ -57,6 +58,7 @@ function Product() {
 
     return (
         <div>
+        
             {product ? (
                 <>
                     <div>{product.title}</div>
