@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.css'
 import { useParams } from 'react-router-dom'
+import ReactStars from "react-rating-stars-component";
 import { Link } from 'react-router-dom'
 
 function ReviewPage() {
@@ -81,12 +82,18 @@ function ReviewPage() {
     };
     return (
         <div>
-            <h1>Welcome to the review page, {user ? user.name : 'Guest'}</h1>
-            <h3>What is your review about this product: {product ? product.title : 'some product'} priced at: {product ? `$${product.price}`: 'some Price'}</h3>
-            <div className='d-flex justify-content-center align-items-center bg-secondary vh-100 vw-100'>
+            <div className='d-flex justify-content-center align-items-center vh-100 vw-100'>
                 <div className='bg-white p-3 rounded w-50'>
-                    <h1>Register</h1>
+                    <h1>Submit a Review</h1>
                     <form onSubmit={handleSubmit}>
+                        <ReactStars
+                            count={5}
+                            onChange={(newRating) => {
+                                setRating(newRating);
+                            }}
+                            size={64}
+                            activeColor="#ffd700"
+                        />
                         <div className="mb-3">
                             <label htmlFor="title" className="form-label">Title</label>
                             <input type="text" className="form-control" id="title"
@@ -101,16 +108,7 @@ function ReviewPage() {
                                     setDescription(data.target.value);
                                 }} />
                         </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="rating">Example select</label>
-                            <select className="form-control" id="rating" value={rating} onChange={(e) => setRating(e.target.value)}>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
+
                         <button type="submit" className="btn btn-success rounded-3">Submit Review</button>
                     </form>
                 </div>

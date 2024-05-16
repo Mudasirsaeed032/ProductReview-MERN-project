@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Link, useNavigate } from 'react-router-dom'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import ReactStars from "react-rating-stars-component";
 
 function Profile() {
   const { id } = useParams();
   const [user, setUser] = useState({});
   const [reviews, setReviews] = useState([]);
-  const [editReviewId, setEditReviewId] = useState(null);
-  const [updatedReview, setUpdatedReview] = useState({ title: '', description: '', starRatings: '' });
 
   useEffect(() => {
     axios.get(`http://localhost:3000/profile/${id}`, { withCredentials: true })
@@ -43,43 +41,25 @@ function Profile() {
       });
   }
 
-  const handleInputChange = (event) => {
-    setUpdatedReview({ ...updatedReview, [event.target.name]: event.target.value });
-  };
-
-  const updateReview = (event, reviewId) => {
-    event.preventDefault();
-    axios.put(`http://localhost:3000/review/${reviewId}`, updatedReview, { withCredentials: true })
-      .then((res) => {
-        console.log(res.data.message);
-        setReviews(reviews.map(review => review._id === reviewId ? updatedReview : review));
-        setEditReviewId(null);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
   return (
     <div>
-      <h1>This is the Profile of {user ? user.name : 'a Guest'}</h1>
+      <h1>Welcome to your profile {user ? user.name : 'a Guest'}</h1>
+      <h2 id='rev'>Here are all of your Reviews:</h2>
       {reviews.map((review) => (
-        <div key={review._id}>
-          {editReviewId === review._id ? (
-            <form onSubmit={(event) => updateReview(event, review._id)}>
-              <input type="text" name="title" value={updatedReview.title} onChange={handleInputChange} />
-              <input type="text" name="description" value={updatedReview.description} onChange={handleInputChange} />
-              <input type="number" name="starRatings" value={updatedReview.starRatings} onChange={handleInputChange} />
-              <button type="submit">Submit Changes</button>
-            </form>
-          ) : (
-            <>
-              <h3>{review.title}</h3>
-              <p>{review.description}</p>
-              <p>Rating: {review.starRatings}</p>
-              <button onClick={() => { setEditReviewId(review._id); setUpdatedReview(review); }}>Edit Review</button>
-            </>
-          )}
-          <button onClick={() => deleteReview(review._id)}>Delete Review</button>
+        <div className="card" key={review._id}>
+          <div className="card-body">
+            <ReactStars
+              count={5}
+              value={review.starRatings}
+              size={44}
+              edit={false}
+              activeColor="#ffd700"
+            />
+            <h5 className="card-title">{review.title}</h5>
+            <p className="card-text">{review.description}</p>
+            <Link to={`/edit/${review._id}`} className="btn btn-primary">Edit Review</Link>
+            <button onClick={() => deleteReview(review._id)} className="btn btn-danger">Delete Review</button>
+          </div>
         </div>
       ))}
     </div>

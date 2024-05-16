@@ -22,6 +22,8 @@ async function main() {
 }
 
 
+
+
 const app = express();
 app.use(cors({
     origin: ['http://localhost:5173'],
@@ -294,6 +296,21 @@ app.delete('/review/:id', async (req, res) => {
         });
 });
 
+app.get('/review/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const review = await Review.findById(id);
+        if (!review) {
+            return res.status(404).json({ message: 'Review not found' });
+        }
+
+        res.json(review);
+    } catch (err) {
+        res.status(500).json({ message: 'There was an error fetching your review. Please try again.', error: err });
+    }
+});
+
 app.put('/review/:id', async (req, res) => {
     const { id } = req.params;
     const { title, description, starRatings } = req.body;
@@ -312,8 +329,7 @@ app.put('/review/:id', async (req, res) => {
 
         res.json({ message: 'Review updated successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'There was an error updating your review. Please try again.', error: err });
     }
 });
 

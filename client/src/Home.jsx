@@ -2,9 +2,8 @@ import React, { useEffect, useState, useContext } from 'react'
 import axios from 'axios'
 import './Home.css'
 import { Link, useNavigate } from 'react-router-dom'
-// import jwt from 'jsonwebtoken'
-import { useJwt } from "react-jwt";
 import { Carousel } from 'react-bootstrap';
+import ReactStars from "react-rating-stars-component";
 
 
 function Home() {
@@ -56,33 +55,10 @@ function Home() {
             <nav className="navbar navbar-expand-lg sticky-top">
                 <a className="navbar-brand" href="#"></a>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul className="navbar-nav mr-auto">
-                        <li className="nav-item active">
-                            <a className="nav-link" href="#" id="formButton">Add Business Card</a>
-                        </li>
-
-                        <li className="nav-item">
-                            <button className="nav-link btn" href="#" id="delete">Delete All</button>
-                        </li>
-                        <li className="nav-item">
-                            <button className="nav-link btn" href="#" id="cool">Cool Theme</button>
-                        </li>
-                        <li className="nav-item">
-                            <button className="nav-link btn" href="#" id="sad">Sad Theme</button>
-                        </li>
-                        <li className="nav-item">
-                            <button className="nav-link btn" href="#" id="funny">Funny Theme</button>
-                        </li>
-                        <li className="nav-item">
-                            <button className="nav-link btn" href="#" id="theme">Theme Options</button>
-                        </li>
-                    </ul>
+                    <h1 id='hey'>Hey, {user ? <Link id='link' to={`/profile/${user._id}`}>{user.name}</Link> : 'Guest'}</h1>
                 </div>
                 <div>
                     <ul className="navbar-nav mr-auto">
-                        <li className="nav-item" id='linkId'>
-                            <h1>Hey, {user ? <Link id='link' to={`/profile/${user._id}`}>{user.name}</Link> : 'Guest'}</h1>
-                        </li>
                         <li className='nav-item'>
                             {isLoggedIn ? (
                                 <button onClick={handleLogout}>Logout</button>
@@ -92,13 +68,6 @@ function Home() {
                         </li>
                     </ul>
                 </div>
-                {/* <form className="form-inline ml-md-auto" id="searchForm">
-                        <div style={{ display: 'flex' }}>
-                            <input id="search" className="form-control" type="search" placeholder="Filter by Title, Description, Nearest Place"
-                                aria-label="Search" />
-                            <button className="btn btn-dark btn-outline-light my-2 my-sm-0 m-2" type="submit" id="searchBtn">Search</button>
-                        </div>
-                    </form> */}
             </nav>
             <Carousel>
                 {products.map((product, index) => (
@@ -133,13 +102,19 @@ function Home() {
                 </div>
                 <div className="row">
                     <h1 style={{ textAlign: 'center', margin: '50px 0' }}>Latest Reviews</h1>
-                    {reviews.slice(-5).map((review, i) => (
+                    {reviews.slice(-5).reverse().map((review, i) => (
                         <div className="card" style={{ '--i': i }} key={i}>
                             <div className="content" style={{ '--j': i + 1 }}>
                                 <h2>Review Title: <b>{review.title}</b></h2>
+                                <ReactStars
+                                    count={5}
+                                    value={review.starRatings}
+                                    size={34}
+                                    edit={false}
+                                    activeColor="#ffd700"
+                                />
                                 <p>{review.description}</p>
                                 <p>Submitted by {review.user}</p>
-                                <p>Rating: {review.starRatings}</p>
                             </div>
                         </div>
                     ))}
